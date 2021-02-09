@@ -3,7 +3,7 @@
   become: yes
   vars:
     JRE_RPM_URL: https://corretto.aws/downloads/latest/amazon-corretto-11-x64-al2-jre.rpm
-    APP_ARTIFACT_URL: https://github.com/jkanclerz/pp5-voucher-store-12/releases/download/v0.1.1/application.jar
+    APP_ARTIFACT_URL: https://github.com/maf-be/pp5-voucherstore-3511/releases/download/v0.1.1/application.jar
     APP_DIR: /opt/ecommerce
     APP_USER: ecommerce
     APP_PORT: 5000
@@ -38,10 +38,10 @@
 - hosts: lb_nodes
   become: yes
   vars:
-    DOMAIN_NAME: vouchershop1.jkan.pl
-    DOMAIN_OWNER_EMAIL: jakub.kanclerz@gmail.com
-    APP_NODE_IPS: 
-      - '172.31.47.146:5000'
+    DOMAIN_NAME: vouchershop1.mblarowska.pl
+    DOMAIN_OWNER_EMAIL: monikablarowska@gmail.com
+    APP_NODE_IPS:
+      - "172.31.47.146:5000"
     EPEL_RPM_URL: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
     CERT_BOT_RPM: https://download-ib01.fedoraproject.org/pub/epel/7/x86_64/Packages/c/certbot-1.10.1-1.el7.noarch.rpm
   tasks:
@@ -71,7 +71,7 @@
         enabled: yes
         state: restarted
     - name: install cert
-      command: 
+      command:
         cmd: certbot -i nginx --nginx -d "{{ DOMAIN_NAME }}" -m "{{ DOMAIN_OWNER_EMAIL }}" --agree-tos --redirect
 
 - hosts: stats
@@ -104,7 +104,7 @@
       template:
         src: files/grafana/grafana.ini
         dest: /etc/grafana/grafana.ini
-    
+
     - name: "restart services"
       service:
         name: "{{ item }}"
@@ -124,7 +124,7 @@
     - name: "create metrics db"
       influxdb_database:
         database_name: "{{ metrics_database }}"
-    
+
     - name: Create influxdb datasource
       grafana_datasource:
         name: "influxdb"
@@ -135,12 +135,12 @@
         ds_url: "http://127.0.0.1:8086"
         database: "{{ metrics_database }}"
         time_interval: ">10s"
-    
+
     - name: copy dashboard to remotr
       copy:
         src: files/grafana/dashboard.json
         dest: /tmp/dashboard.json
-      
+
     - name: Create grafana dashboard
       grafana_dashboard:
         grafana_url: "{{ grafana_url }}"
